@@ -30,6 +30,10 @@ func (f *CachedFetcher) Fetch(url string) (body string, urls []string, err error
 	f.mux.Lock()
 	defer f.mux.Unlock()
 
+	if val, ok := f.cache[url]; ok {
+		return val.body, val.urls, nil
+	}
+
 	fetchedBody, fetchedUrls, err := f.fetcher.Fetch(url)
 	if err == nil {
 		f.cache[url] = struct {
